@@ -5,4 +5,6 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_login">login</string>
     <string name="title_activity_register">Register</string>
+    <string name="title_activity_manage">Manage</string>
+    <string name="title_activity_new">New</string>
 </resources>

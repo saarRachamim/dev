@@ -24,6 +24,7 @@ public class GPSHandler extends Service implements LocationListener {
     Location location;
     double latitude;
     double longtitude;
+    double altitude;
 
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES_IN_METERS = 10;
     private static final long MIN_MILLISECONDS_TO_UPDATE = 1000 * 60;
@@ -54,6 +55,7 @@ public class GPSHandler extends Service implements LocationListener {
                         if (location != null) {
                             latitude = location.getLatitude();
                             longtitude = location.getLongitude();
+                            altitude = location.getAltitude();
 
                         }
                     }
@@ -74,6 +76,10 @@ public class GPSHandler extends Service implements LocationListener {
 
     public double getLongtitude() {
         return longtitude;
+    }
+
+    public double getAltitude() {
+        return altitude;
     }
 
     @Override
