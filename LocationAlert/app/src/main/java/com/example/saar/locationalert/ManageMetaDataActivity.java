@@ -1,5 +1,6 @@
 package com.example.saar.locationalert;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -23,10 +24,9 @@ public class ManageMetaDataActivity extends AppCompatActivity implements MetaDat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.new_metadata_activity);
+        setContentView(R.layout.metadata_rceycler);
 
         dbOperations = new DBOperations(this);
-        dbOperations.open();
         metaDatasList = dbOperations.getAllMetaData();
 
         recyclerView = (RecyclerView) findViewById(R.id.metadata_recycler_view);
@@ -41,8 +41,25 @@ public class ManageMetaDataActivity extends AppCompatActivity implements MetaDat
 
     @Override
     public void itemClicked(View view, int position) {
-        dbOperations.open();
-        dbOperations.removeMetaDataFromDb(position);
-        dbOperations.close();
+        switch (view.getId()) {
+            case R.id.remove_icon:
+                dbOperations.removeMetaDataFromDb(position);
+                break;
+            case R.id.edit_icon:
+                MetaData metadata = mAdapter.getMetadataById(position);
+                Intent intent = new Intent(this, NewMetaDataActivity.class);
+
+                Bundle b = new Bundle();
+                b.putInt("id", position);
+                b.putString("cell", metadata.getCell());
+                b.putString("message", metadata.getMessage());
+                b.putString("address", metadata.getAddress());
+                b.putDouble("latitude", metadata.getLatitude());
+                b.putDouble("longitude", metadata.getLongitude());
+
+                intent.putExtras(b);
+                startActivity(intent);
+                break;
+        }
     }
 }

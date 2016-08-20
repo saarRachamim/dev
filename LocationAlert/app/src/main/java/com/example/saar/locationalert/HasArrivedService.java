@@ -85,7 +85,6 @@ public class HasArrivedService extends Service {
                 while (true) {
                     try {
                         sleep(30000);
-                        dbOperations.open();
                         metaDatasList = dbOperations.getAllMetaData();
                         SmsManager smsManager = SmsManager.getDefault();
                         for (MetaData metadata : metaDatasList) {

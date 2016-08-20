@@ -24,7 +24,6 @@ public class AddressAdapter extends ArrayAdapter<Address> {
         super(context, -1, _addressList);
         addressList = (ArrayList<Address>) _addressList;
         this.context = context;
-
     }
 
     @Override
@@ -44,11 +43,5 @@ public class AddressAdapter extends ArrayAdapter<Address> {
         for (int j = 0; j < addressList.get(position).getMaxAddressLineIndex(); ++j)
             addressStr += " " + addressList.get(position).getAddressLine(j);
         return addressStr;
-    }
-
-    public void removeAllItems()
-    {
-        for(int i = 0; i < addressList.size(); i++)
-            addressList.remove(i);
     }
 }

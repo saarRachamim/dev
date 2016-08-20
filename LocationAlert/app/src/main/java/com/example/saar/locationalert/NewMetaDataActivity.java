@@ -5,6 +5,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -16,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,14 +29,11 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
     EditText messageBox;
     EditText locationField;
     Button saveButton;
-    Button logoutButton;
 
     ListView locationsList;
     ArrayAdapter<String> adapter;
     AddressAdapter addressAdapter;
     ArrayList<String> items;
-    UserStore userStore;
-    User user;
     Geocoder geocoder;
     Locale lHebrew;
     LocationManager locationManager;
@@ -46,19 +45,17 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
     String messageStr = "";
     String addressStr = "";
     List<MetaData> metaDatas;
-
+    Bundle b;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.save_location_main);
-        logoutButton = (Button) findViewById(R.id.logoutButton);
 
         phoneNumber = (EditText) findViewById(R.id.cellphone_number);
         messageBox = (EditText) findViewById(R.id.message_box);
         locationField = (EditText) findViewById(R.id.location_field);
         saveButton = (Button) findViewById(R.id.save_changes);
-
 
         locationsList = (ListView) findViewById(R.id.locations_list);
         items = new ArrayList<String>();
@@ -66,45 +63,67 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
         lHebrew = new Locale("he");
         geocoder = new Geocoder(this, lHebrew);
 
-        logoutButton.setOnClickListener(this);
+        b = getIntent().getExtras();
+        if(b != null)
+        {
+            phoneNumber.setText(b.getString("cell"));
+            messageBox.setText(b.getString("message"));
+            locationField.setText(b.getString("address"));
+        }
+
         saveButton.setOnClickListener(this);
         locationField.addTextChangedListener(this);
-        userStore = new UserStore(this);
         dbOperations = new DBOperations(this);
-        dbOperations.open();
     }
 
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.logoutButton:
-                userStore.clearData();
-                userStore.setIsUserLoggedIn(false);
-                startActivity(new Intent(this, login.class));
-                break;
             case R.id.save_changes:
                 phoneNumberStr = phoneNumber.getText().toString();
                 messageStr = messageBox.getText().toString();
                 addressStr = locationField.getText().toString();
+                if(b == null)
+                {
+                    dbOperations.insertMetaDataToDb(phoneNumberStr, messageStr, addressStr, add.getLatitude(), add.getLongitude());
+                }
+                else
+                {
+                    int metadaId = b.getInt("id");
+                    double latitiude;
+                    double longitude;
 
-                dbOperations.insertMetaDataToDb(phoneNumberStr, messageStr, addressStr, add.getLatitude(), add.getLongitude());
+                    if(add == null)
+                    {
+                        latitiude = b.getDouble("latitiude");
+                        longitude = b.getDouble("longitude");
+                    }
+                    else
+                    {
+                        latitiude = add.getLatitude();
+                        longitude = add.getLongitude();
+                    }
+
+                    dbOperations.removeMetaDataFromDb(metadaId);
+                    dbOperations.insertMetaDataToDb(phoneNumberStr, messageStr, addressStr, latitiude, longitude);
+                }
+
+                Toast.makeText(this, "The message was saved", Toast.LENGTH_SHORT).show();
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                    }
+                }, 1000);
+
+                break;
         }
     }
 
     protected void onStart() {
         super.onStart();
-        if (isUserLoggenIn())
-        {
-//            user = userStore.getLoggenInUser();
-
-//            double longtitude = gpsHandler.getLongtitude();
-//            double latitude = gpsHandler.getLatitude();
-//            helloMessage.setText("hello, " + user.userName + "\n " + longtitude + " "  + latitude);
-        }
-        else {
-            startActivity(new Intent(this, login.class));
-        }
     }
 
     private void setUserData(String s){
@@ -138,11 +157,6 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
             });
         }
     }
-
-    private boolean isUserLoggenIn() {
-        return userStore.isUserLoggedIn();
-    }
-
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {

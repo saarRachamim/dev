@@ -34,27 +34,35 @@ public class DBOperations {
 
     public void insertMetaDataToDb(String cell, String message, String addressStr, double latitude, double longtitude){
         ContentValues values = new ContentValues();
+        open();
+
         values.put("cell", cell);
         values.put("message", message);
         values.put("addressStr", addressStr);
         values.put("latitude", latitude);
         values.put("longitude", longtitude);
 
-        long id = database.insert(DBWrapper.table, null, values);
+        database.insert(DBWrapper.table, null, values);
+        close();
     }
 
     public void removeMetaDataFromDb(int id){
+        open();
         database.delete(DBWrapper.table, "id=" + id, null);
+        close();
     }
 
     public List getAllMetaData(){
         List metaDatas = new ArrayList();
+        open();
         Cursor cursor = database.query(DBWrapper.table, columns, null, null, null, null, null);
         cursor.moveToFirst();
         while(!cursor.isAfterLast()){
             metaDatas.add(parseCursorToMetaData(cursor));
             cursor.moveToNext();
         }
+        close();
+
         return metaDatas;
     }
 

@@ -4,7 +4,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -15,6 +19,7 @@ import java.util.List;
 public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyViewHolder> {
     public List<MetaData> metaDataList;
     ClickListener clickListener;
+    Animation fadeOutAnimation;
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -43,6 +48,13 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
 
     public void delete(int index){ metaDataList.remove(index); }
 
+    public MetaData getMetadataById(int id) {
+        for(int i = 0; i < metaDataList.size(); ++i)
+            if(metaDataList.get(i).getId() == id)
+                return metaDataList.get(i);
+
+        return null;
+    }
 
     public MetaDatasAdapter(List<MetaData> metaDataList) {
         this.metaDataList = metaDataList;
@@ -52,15 +64,25 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
     public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public TextView cell, message, address;
         public int metadataId;
-        public ImageView deleteIcon;
+        public ImageView deleteIcon, editIcon;
+        public LinearLayout metadataLayout;
 
         public MyViewHolder(View view) {
             super(view);
+
+            fadeOutAnimation = new AlphaAnimation(1, 0);
+            fadeOutAnimation.setInterpolator(new AccelerateInterpolator()); //and this
+            fadeOutAnimation.setStartOffset(100);
+            fadeOutAnimation.setDuration(1000);
+
+            metadataLayout = (LinearLayout) view.findViewById(R.id.metadata_layout);
             cell = (TextView) view.findViewById(R.id.cell);
             message = (TextView) view.findViewById(R.id.message);
             address = (TextView) view.findViewById(R.id.address);
             deleteIcon = (ImageView) view.findViewById(R.id.remove_icon);
             deleteIcon.setOnClickListener(this);
+            editIcon = (ImageView) view.findViewById(R.id.edit_icon);
+            editIcon.setOnClickListener(this);
         }
 
         @Override
@@ -72,24 +94,34 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
                         clickListener.itemClicked(v, metadataId);
                     }
 
+                    metadataLayout.startAnimation(fadeOutAnimation);
                     delete(getAdapterPosition());
                     notifyItemChanged(getAdapterPosition());
                     notifyDataSetChanged();
+                    break;
+                case R.id.edit_icon:
+                    if(clickListener != null)
+                    {
+                        clickListener.itemClicked(v, metadataId);
+                    }
+                    notifyItemChanged(getAdapterPosition());
+                    break;
             }
         }
     }
+
     public interface ClickListener{
         public void itemClicked(View view, int position);
     }
 
-    //To add save toast, and open new activity of main activity.
-    // db.open and db. close inside function of db operations. no outside.
+    //To add save toast, and open new activity of main activity - done
+    // db.open and db.close inside function of db operations. no outside. - done
 
     // check fragments - do fragments on the new meta data.
-    // check for animations.
+    // check for animations - done, implemented a fade out for removal of metadatas.
 
-    //check google analytics
-    //check crashylitics\fabrics
-    //to add edits
-    //clean code
+    //check google analytics - done, for app only, fire base is recommended. I checked it and I can see the amount of users for the app - 1.
+    //check crashylitics\fabrics - done, added what needed to the gradle files, stopped after noticing it requires a credit card information for a token to be created.
+    //to add edits - done.
+    //clean code - done.
 }

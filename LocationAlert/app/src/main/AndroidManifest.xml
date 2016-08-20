@@ -22,12 +22,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".login"
-            android:label="@string/title_activity_login"></activity>
-        <activity
-            android:name=".Register"
-            android:label="@string/title_activity_register"></activity>
-        <activity
             android:name=".ManageMetaDataActivity"
             android:label="@string/title_activity_manage"></activity>
         <activity
