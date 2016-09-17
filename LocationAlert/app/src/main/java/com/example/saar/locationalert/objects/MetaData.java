@@ -1,4 +1,4 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.objects;
 
 /**
  * Created by Saar on 30/07/2016.

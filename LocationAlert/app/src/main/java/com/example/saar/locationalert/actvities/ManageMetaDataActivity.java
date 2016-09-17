@@ -1,4 +1,4 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.actvities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,7 +6,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+
+import com.example.saar.locationalert.R;
+import com.example.saar.locationalert.db.DBOperations;
+import com.example.saar.locationalert.objects.MetaData;
+import com.example.saar.locationalert.adapters.MetaDatasAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,17 +22,18 @@ import java.util.List;
 /**
  * Created by Saar on 30/07/2016.
  */
-public class ManageMetaDataActivity extends AppCompatActivity implements MetaDatasAdapter.ClickListener {
+public class ManageMetaDataActivity extends AppCompatActivity implements MetaDatasAdapter.ClickListener, View.OnClickListener {
     List<MetaData> metaDatasList = new ArrayList<>();
     RecyclerView recyclerView;
     MetaDatasAdapter mAdapter;
     DBOperations dbOperations;
+    Animation mSlideOutToRight;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.metadata_rceycler);
+        setContentView(R.layout.manage_metadata_activity);
 
         dbOperations = new DBOperations(this);
         metaDatasList = dbOperations.getAllMetaData();
@@ -37,6 +46,22 @@ public class ManageMetaDataActivity extends AppCompatActivity implements MetaDat
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+        }
+        return false;
     }
 
     @Override
@@ -59,6 +84,15 @@ public class ManageMetaDataActivity extends AppCompatActivity implements MetaDat
 
                 intent.putExtras(b);
                 startActivity(intent);
+                break;
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch(v.getId()){
+            case R.id.create_new_metadata:
+                startActivity(new Intent(this, NewMetaDataActivity.class));
                 break;
         }
     }

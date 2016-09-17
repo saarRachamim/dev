@@ -1,10 +1,15 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.services;
 
 import android.app.Service;
 import android.content.Intent;
 import android.location.Geocoder;
 import android.os.IBinder;
 import android.telephony.SmsManager;
+
+import com.example.saar.locationalert.db.DBOperations;
+import com.example.saar.locationalert.objects.MetaData;
+import com.example.saar.locationalert.services.GPSHandler;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -96,7 +101,7 @@ public class HasArrivedService extends Service {
                             }
                             double distance = distance(gpsHandler.getLatitude(), gpsHandler.getLongtitude(), metadata.getLatitude(), metadata.getLongitude());
                             if (distance <= 0.3) {
-                                smsManager.sendTextMessage(metadata.cell, null, metadata.message, null, null);
+                                smsManager.sendTextMessage(metadata.getCell(), null, metadata.getMessage(), null, null);
                                 dbOperations.removeMetaDataFromDb(metadata.getId());
                             }
                         }

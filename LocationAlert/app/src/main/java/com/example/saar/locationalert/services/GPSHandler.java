@@ -1,4 +1,4 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.services;
 
 import android.app.Service;
 import android.content.Context;

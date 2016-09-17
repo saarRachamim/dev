@@ -1,10 +1,15 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.actvities;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+
+import com.example.saar.locationalert.services.HasArrivedService;
+import com.example.saar.locationalert.R;
 
 /**
  * Created by Saar on 30/07/2016.
@@ -25,6 +30,22 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         manageButton.setOnClickListener(this);
 
         startService(new Intent(this, HasArrivedService.class));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_settings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.settings:
+                startActivity(new Intent(this, SettingsActivity.class));
+                return true;
+        }
+        return false;
     }
 
     @Override

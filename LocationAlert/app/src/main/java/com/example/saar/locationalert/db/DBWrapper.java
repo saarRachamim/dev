@@ -1,4 +1,4 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.db;
 
 import android.content.Context;
 import android.content.ContextWrapper;

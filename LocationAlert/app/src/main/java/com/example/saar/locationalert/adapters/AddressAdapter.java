@@ -1,4 +1,4 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.adapters;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.example.saar.locationalert.R;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,8 +42,10 @@ public class AddressAdapter extends ArrayAdapter<Address> {
     public String getItemString(int position)
     {
         String addressStr = "";
-        for (int j = 0; j < addressList.get(position).getMaxAddressLineIndex(); ++j)
-            addressStr += " " + addressList.get(position).getAddressLine(j);
+        if(addressList.size() > 0)
+            for (int j = 0; j < addressList.get(position).getMaxAddressLineIndex(); ++j)
+                addressStr += " " + addressList.get(position).getAddressLine(j);
+
         return addressStr;
     }
 }

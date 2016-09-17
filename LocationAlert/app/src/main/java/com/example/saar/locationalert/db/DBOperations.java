@@ -1,14 +1,14 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.db;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Address;
+
+import com.example.saar.locationalert.objects.MetaData;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by Saar on 30/07/2016.
@@ -64,6 +64,22 @@ public class DBOperations {
         close();
 
         return metaDatas;
+    }
+
+    public MetaData getMetaDataById(int id){
+        open();
+        Cursor cursor = database.query(DBWrapper.table, columns, null, null, null, null, null);
+        cursor.moveToFirst();
+        MetaData metaData = null;
+        while(!cursor.isAfterLast()){
+            metaData = parseCursorToMetaData(cursor);
+            cursor.moveToNext();
+            if(metaData.getId() == id)
+                break;
+        }
+        close();
+
+        return metaData;
     }
 
     private MetaData parseCursorToMetaData(Cursor cursor){

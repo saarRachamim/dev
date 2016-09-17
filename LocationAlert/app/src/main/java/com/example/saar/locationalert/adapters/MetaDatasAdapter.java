@@ -1,15 +1,18 @@
-package com.example.saar.locationalert;
+package com.example.saar.locationalert.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.saar.locationalert.objects.MetaData;
+import com.example.saar.locationalert.R;
 
 import java.util.List;
 
@@ -19,11 +22,13 @@ import java.util.List;
 public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyViewHolder> {
     public List<MetaData> metaDataList;
     ClickListener clickListener;
-    Animation fadeOutAnimation;
+    Animation mSlideOutToRight;
+
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.metadatas_list_layout, parent, false);
+
         return new MyViewHolder(view);
     }
 
@@ -66,16 +71,14 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
         public int metadataId;
         public ImageView deleteIcon, editIcon;
         public LinearLayout metadataLayout;
+        Button createNew;
 
         public MyViewHolder(View view) {
             super(view);
-
-            fadeOutAnimation = new AlphaAnimation(1, 0);
-            fadeOutAnimation.setInterpolator(new AccelerateInterpolator()); //and this
-            fadeOutAnimation.setStartOffset(100);
-            fadeOutAnimation.setDuration(1000);
-
+            createNew  = (Button)view.findViewById(R.id.create_new_metadata);
+            mSlideOutToRight = AnimationUtils.loadAnimation(view.getContext(), R.anim.swipe_out_to_right);
             metadataLayout = (LinearLayout) view.findViewById(R.id.metadata_layout);
+
             cell = (TextView) view.findViewById(R.id.cell);
             message = (TextView) view.findViewById(R.id.message);
             address = (TextView) view.findViewById(R.id.address);
@@ -93,9 +96,9 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
                     {
                         clickListener.itemClicked(v, metadataId);
                     }
+                    metadataLayout.startAnimation(mSlideOutToRight);
 
-                    metadataLayout.startAnimation(fadeOutAnimation);
-                    delete(getAdapterPosition());
+//                    delete(getAdapterPosition());
                     notifyItemChanged(getAdapterPosition());
                     notifyDataSetChanged();
                     break;

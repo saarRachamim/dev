@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name=".actvities.MainActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,16 +22,21 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ManageMetaDataActivity"
-            android:label="@string/title_activity_manage"></activity>
+            android:name=".actvities.ManageMetaDataActivity"
+            android:label="@string/title_activity_manage"/>
         <activity
-            android:name=".NewMetaDataActivity"
-            android:label="@string/title_activity_new"></activity>
+            android:name=".actvities.NewMetaDataActivity"
+            android:label="@string/title_activity_new"
+            />
 
         <service
-            android:name=".HasArrivedService"
+            android:name=".services.HasArrivedService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity
+            android:name=".actvities.SettingsActivity"
+            android:label="@string/title_activity_preference"></activity>
     </application>
 
 </manifest>
