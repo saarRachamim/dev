@@ -97,10 +97,24 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
                         clickListener.itemClicked(v, metadataId);
                     }
                     metadataLayout.startAnimation(mSlideOutToRight);
+                    mSlideOutToRight.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
+                        public void onAnimationStart(Animation animation) {
 
-//                    delete(getAdapterPosition());
-                    notifyItemChanged(getAdapterPosition());
-                    notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onAnimationEnd(Animation animation) {
+                            delete(getAdapterPosition());
+                            notifyItemChanged(getAdapterPosition());
+                            notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onAnimationRepeat(Animation animation) {
+
+                        }
+                    });
                     break;
                 case R.id.edit_icon:
                     if(clickListener != null)
