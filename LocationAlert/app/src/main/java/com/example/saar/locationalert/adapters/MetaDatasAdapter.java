@@ -117,14 +117,19 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
         public void itemClicked(View view, int position);
     }
 
-    //To add save toast, and open new activity of main activity - done
-    // db.open and db.close inside function of db operations. no outside. - done
+    // In android there is a possibility to add a settings component.
+    // Add the following:
+    //Settings-> Default message-> - done
 
-    // check fragments - do fragments on the new meta data.
-    // check for animations - done, implemented a fade out for removal of metadatas.
+    //  At the create new, after save create new activity of the manage. - done
 
-    //check google analytics - done, for app only, fire base is recommended. I checked it and I can see the amount of users for the app - 1.
-    //check crashylitics\fabrics - done, added what needed to the gradle files, stopped after noticing it requires a credit card information for a token to be created.
-    //to add edits - done.
-    //clean code - done.
+    // Add a create button to the manage - done
+    // Add animation that the new order will fade in to the screen, in its index location. - no time
+    // And the minus will shift the item out of the screen instead of fade out. - stuck
+
+    //To pass an id of the object at the database instead of the data of the order between activities- done
+    // Learn on ORM, green dao- learned briefly
+    // To improve the performance of the locations search, - done.
+    //Add fragments. - done.
+    //Next time to add tasks for networking and UI- reminder
 }
