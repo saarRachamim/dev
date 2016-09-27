@@ -23,6 +23,8 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
     public List<MetaData> metaDataList;
     ClickListener clickListener;
     Animation mSlideOutToRight;
+    Animation mFadeIn;
+    int lastPosition = -1;
 
 
     @Override
@@ -39,6 +41,8 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
         holder.message.setText(metaData.getMessage());
         holder.address.setText(metaData.getAddress());
         holder.metadataId = metaData.getId();
+
+        setAnimation(holder.metadataLayout, position);
     }
 
     public void setClickListener(ClickListener clickListener){
@@ -127,6 +131,19 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
         }
     }
 
+    /**
+     * Here is the key method to apply the animation
+     */
+    private void setAnimation(View viewToAnimate, int position)
+    {
+        // If the bound view wasn't previously displayed on screen, it's animated
+        if (position > lastPosition)
+        {
+            Animation animation = AnimationUtils.loadAnimation(viewToAnimate.getContext(), android.R.anim.fade_in);
+            viewToAnimate.startAnimation(animation);
+            lastPosition = position;
+        }
+    }
     public interface ClickListener{
         public void itemClicked(View view, int position);
     }
