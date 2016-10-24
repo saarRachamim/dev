@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -46,6 +47,9 @@ public class ManageMetaDataActivity extends AppCompatActivity implements MetaDat
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(mAdapter);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
     }
 
     @Override
@@ -73,6 +77,7 @@ public class ManageMetaDataActivity extends AppCompatActivity implements MetaDat
             case R.id.edit_icon:
                 MetaData metadata = mAdapter.getMetadataById(position);
                 Intent intent = new Intent(this, NewMetaDataActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 Bundle b = new Bundle();
                 b.putInt("id", position);
@@ -92,7 +97,9 @@ public class ManageMetaDataActivity extends AppCompatActivity implements MetaDat
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.create_new_metadata:
-                startActivity(new Intent(this, NewMetaDataActivity.class));
+                Intent intent = new Intent(this, NewMetaDataActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 break;
         }
     }

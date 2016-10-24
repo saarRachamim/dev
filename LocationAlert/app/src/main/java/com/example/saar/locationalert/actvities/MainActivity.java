@@ -3,6 +3,7 @@ package com.example.saar.locationalert.actvities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +31,9 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         manageButton.setOnClickListener(this);
 
         startService(new Intent(this, HasArrivedService.class));
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
     }
 
     @Override
@@ -52,10 +56,14 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.newButton:
-                startActivity(new Intent(this, NewMetaDataActivity.class));
+                Intent newMetadataIntent = new Intent(this, NewMetaDataActivity.class);
+                newMetadataIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(newMetadataIntent);
                 break;
             case R.id.manageButton:
-                startActivity(new Intent(this, ManageMetaDataActivity.class));
+                Intent ManageMetaDataIntent = new Intent(this, ManageMetaDataActivity.class);
+                ManageMetaDataIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(ManageMetaDataIntent);
                 break;
         }
     }

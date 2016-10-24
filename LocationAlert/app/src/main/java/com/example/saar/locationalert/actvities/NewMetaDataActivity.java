@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class NewMetaDataActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
     EditText phoneNumber;
@@ -54,6 +57,8 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
     MetaData metaData;
     String lastUpdatedAdd = "";
     Bundle b;
+
+    Timer timer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +96,9 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
 
         saveButton.setOnClickListener(this);
         locationField.addTextChangedListener(this);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
     }
 
     @Override
@@ -142,53 +150,22 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
 
                 Toast.makeText(this, "The message was saved", Toast.LENGTH_SHORT).show();
 
+                
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        startActivity(new Intent(getApplicationContext(), ManageMetaDataActivity.class));
+                        Intent manageMetaDataIntent = new Intent(getApplicationContext(), ManageMetaDataActivity.class);
+                        manageMetaDataIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(manageMetaDataIntent);
                     }
                 }, 1000);
-
+                finish();
                 break;
         }
     }
 
     protected void onStart() {
         super.onStart();
-    }
-
-
-
-    private void setUserData(String s){
-        gpsHandler = new GPSHandler(this);
-        if(gpsHandler.isCanGetLocation())
-        {
-            List<Address> addresses = new ArrayList<Address>();
-            items.clear();
-            int tryToFindLocation = 0;
-            while (addresses.size()==0 && tryToFindLocation < 1) {
-                try {
-                    addresses = geocoder.getFromLocationName(s, 5);
-                    ++tryToFindLocation;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            addressAdapter = new AddressAdapter(this.getBaseContext(), addresses);
-            locationsList.setAdapter(addressAdapter);
-            addressAdapter.notifyDataSetChanged();
-            locationsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    add = addressAdapter.getItem(position);
-                    locationField.setText(addressAdapter.getItemString(position));
-                    addressAdapter = new AddressAdapter(getBaseContext(), new ArrayList<Address>());
-                    locationsList.setAdapter(addressAdapter);
-                    addressAdapter.notifyDataSetChanged();
-                }
-            });
-        }
     }
 
     @Override
@@ -198,12 +175,21 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
+        if(timer != null)
+        {
+            timer.cancel();
+        }
     }
 
     @Override
     public void afterTextChanged(final Editable s) {
-          new AsyncTextListener(this, s.toString()).execute();
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                new AsyncTextListener(getApplication().getApplicationContext(), s.toString()).execute();
+            }
+        }, 400);
     }
 
     public class AsyncTextListener extends AsyncTask<String, String, Long> {
@@ -222,6 +208,25 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
         }
 
         @Override
+        protected void onPostExecute(Long aLong) {
+            super.onPostExecute(aLong);
+
+            locationsList.setAdapter(addressAdapter);
+            addressAdapter.notifyDataSetChanged();
+            locationsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    lastUpdatedAdd = addressAdapter.getItemString(position);
+                    add = addressAdapter.getItem(position);
+                    locationField.setText(addressAdapter.getItemString(position));
+                    addressAdapter = new AddressAdapter(getBaseContext(), new ArrayList<Address>());
+                    locationsList.setAdapter(addressAdapter);
+                    addressAdapter.notifyDataSetChanged();
+                }
+            });
+        }
+
+        @Override
         protected Long doInBackground(String... params) {
             runOnUiThread(new Runnable() {
                 @Override
@@ -234,7 +239,6 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
 
         private void setUserData(String s){
             gpsHandler = new GPSHandler(context);
-            boolean isEquals = lastUpdatedAdd.equals(locationField.getText().toString());
             if(gpsHandler.isCanGetLocation() && !lastUpdatedAdd.equals(locationField.getText().toString()))
             {
                 List<Address> addresses = new ArrayList<Address>();
@@ -250,19 +254,6 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
                 }
 
                 addressAdapter = new AddressAdapter(getBaseContext(), addresses);
-                locationsList.setAdapter(addressAdapter);
-                addressAdapter.notifyDataSetChanged();
-                locationsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        lastUpdatedAdd = addressAdapter.getItemString(position);
-                        add = addressAdapter.getItem(position);
-                        locationField.setText(addressAdapter.getItemString(position));
-                        addressAdapter = new AddressAdapter(getBaseContext(), new ArrayList<Address>());
-                        locationsList.setAdapter(addressAdapter);
-                        addressAdapter.notifyDataSetChanged();
-                    }
-                });
             }
         }
 

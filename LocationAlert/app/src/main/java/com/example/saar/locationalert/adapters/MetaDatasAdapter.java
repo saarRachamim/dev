@@ -1,5 +1,7 @@
 package com.example.saar.locationalert.adapters;
 
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.saar.locationalert.listener.OnSwipeListener;
 import com.example.saar.locationalert.objects.MetaData;
 import com.example.saar.locationalert.R;
 
@@ -23,7 +26,6 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
     public List<MetaData> metaDataList;
     ClickListener clickListener;
     Animation mSlideOutToRight;
-    Animation mFadeIn;
     int lastPosition = -1;
 
 
@@ -77,11 +79,38 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
         public LinearLayout metadataLayout;
         Button createNew;
 
-        public MyViewHolder(View view) {
+        public MyViewHolder(final View view) {
             super(view);
+
+            final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                    view.getContext());
+
             createNew  = (Button)view.findViewById(R.id.create_new_metadata);
             mSlideOutToRight = AnimationUtils.loadAnimation(view.getContext(), R.anim.swipe_out_to_right);
             metadataLayout = (LinearLayout) view.findViewById(R.id.metadata_layout);
+
+            alertDialogBuilder.setMessage("Are you sure").setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    triggerRemoveIconOnClick(view);
+                }
+            }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+
+            metadataLayout.setOnTouchListener(new OnSwipeListener(view.getContext()) {
+
+                public void onSwipeRight(){
+                    alertDialogBuilder.show();
+                }
+
+                public void onSwipeLeft(){
+                    alertDialogBuilder.show();
+                }
+            });
 
             cell = (TextView) view.findViewById(R.id.cell);
             message = (TextView) view.findViewById(R.id.message);
@@ -90,6 +119,10 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
             deleteIcon.setOnClickListener(this);
             editIcon = (ImageView) view.findViewById(R.id.edit_icon);
             editIcon.setOnClickListener(this);
+        }
+
+        public void triggerRemoveIconOnClick(View view){
+            onClick((ImageView)view.findViewById(R.id.remove_icon));
         }
 
         @Override
@@ -147,20 +180,23 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
     public interface ClickListener{
         public void itemClicked(View view, int position);
     }
+//    Use action bar in the app
 
-    // In android there is a possibility to add a settings component.
-    // Add the following:
-    //Settings-> Default message-> - done
+//    Not critical - Back should not go back to all previous activities
 
-    //  At the create new, after save create new activity of the manage. - done
+//    Performance in location finder
+//    First, all UI changes should be in onPostExecute and not in doInBackground. Check out how you pass data to it. - done
+//    On any input change, wait 1 sec. If that 1 sec passed and there was no other input change since - run the asynctask - done
 
-    // Add a create button to the manage - done
-    // Add animation that the new order will fade in to the screen, in its index location. - no time
-    // And the minus will shift the item out of the screen instead of fade out. - stuck
+//    Add a new activity that shows a map - // TODO: 23/10/2016  
 
-    //To pass an id of the object at the database instead of the data of the order between activities- done
-    // Learn on ORM, green dao- learned briefly
-    // To improve the performance of the locations search, - done.
-    //Add fragments. - done.
-    //Next time to add tasks for networking and UI- reminder
+//    Change UI of manage screen to appear like Gmail - done
+
+//    Add gesture on each item in manage screen, that if you do swipe left to right or right to left... - done
+
+//    ORM - feel free to migrate your data to use GreenDAO - // TODO: 23/10/2016
+
+//    You can start thinking about on boarding and how you the app behaving - done.
+//    I think that on setting to add support for manager number, by doing that updates by the manager will be shown to the user.
+//    The manager will see all the users that are related to him.
 }
