@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<catalog>
+   <test id="tst01">
+	  <name>Google</name>
+      <url>https://www.google.com</url>
+   </test>
+   <test id="tst02">
+	  <name>Facebook</name>
+      <url>https://www.facebook.com</url>
+   </test>
+   <test id="tst03">
+	  <name>Gmail</name>
+      <url>https://www.gmail.com</url>
+   </test>
+</catalog>
