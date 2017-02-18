@@ -14,8 +14,8 @@ public class DBWrapper extends SQLiteOpenHelper{
 
     public static final String table = "locationMetaData";
 
-    public static final String createTable = "create table "+ table +" (id integer primary key autoincrement, " +
-           "cell text not null, message text not null, addressStr text not null, latitude real not null, longitude real not null);";
+    public static final String createTable = "create table "+ table +" (idStr integer primary key autoincrement, " +
+           "cellStr text not null, messageStr text not null, addressStr text not null, latitudeStr real not null, longitudeStr real not null);";
 
     public DBWrapper(Context context){
         super(context, dbName, null, dbVersion);

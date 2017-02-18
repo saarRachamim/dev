@@ -6,14 +6,15 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/location_alert_icon"
         android:label="@string/app_name"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".actvities.MainActivity"
+            android:name=".actvities.ManageMetaDataActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,20 +23,14 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".actvities.ManageMetaDataActivity"
-            android:label="@string/title_activity_manage" />
-        <activity
             android:name=".actvities.NewMetaDataActivity"
-            android:label="@string/title_activity_new" />
-
+            android:label="@string/title_activity_new"/>
         <service
             android:name=".services.HasArrivedService"
             android:enabled="true"
             android:exported="true" />
-
         <activity
             android:name=".actvities.SettingsActivity"
             android:label="@string/title_activity_preference" />
     </application>
-
 </manifest>

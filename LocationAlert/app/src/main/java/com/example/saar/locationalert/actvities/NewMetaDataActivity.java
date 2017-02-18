@@ -2,11 +2,14 @@ package com.example.saar.locationalert.actvities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -14,6 +17,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,6 +29,8 @@ import android.widget.Toast;
 import com.example.saar.locationalert.R;
 import com.example.saar.locationalert.adapters.AddressAdapter;
 import com.example.saar.locationalert.db.DBOperations;
+import com.example.saar.locationalert.objects.AppConstants;
+import com.example.saar.locationalert.objects.PermissionHandler;
 import com.example.saar.locationalert.services.GPSHandler;
 import com.example.saar.locationalert.objects.MetaData;
 
@@ -36,34 +42,36 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class NewMetaDataActivity extends AppCompatActivity implements View.OnClickListener, TextWatcher {
-    EditText phoneNumber;
-    EditText messageBox;
-    EditText locationField;
-    Button saveButton;
+    private static final int REQUEST_CODE = 1;
 
-    ListView locationsList;
-    ArrayAdapter<String> adapter;
-    AddressAdapter addressAdapter;
-    ArrayList<String> items;
-    Geocoder geocoder;
-    Locale lHebrew;
-    GPSHandler gpsHandler;
-    Address add = null;
-    DBOperations dbOperations;
-    String phoneNumberStr = "";
-    String messageStr = "";
-    String addressStr = "";
-    String prefMessage;
-    MetaData metaData;
-    String lastUpdatedAdd = "";
-    Bundle b;
+    private EditText phoneNumber;
+    private EditText messageBox;
+    private EditText locationField;
+    private Button saveButton;
 
-    Timer timer = null;
+    private ListView locationsList;
+    private ArrayAdapter<String> adapter;
+    private AddressAdapter addressAdapter;
+    private ArrayList<String> items;
+    private Geocoder geocoder;
+    private Locale lHebrew;
+    private GPSHandler gpsHandler;
+    private Address add = null;
+    private DBOperations dbOperations;
+    private String phoneNumberStr = "";
+    private String messageStr = "";
+    private String addressStr = "";
+    private String prefMessage;
+    private MetaData metaData;
+    private String lastUpdatedAdd = "";
+    private Bundle b;
+
+    private Timer timer = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.save_location_main);
+        setContentView(R.layout.new_metadata_activity);
 
         phoneNumber = (EditText) findViewById(R.id.cellphone_number);
         messageBox = (EditText) findViewById(R.id.message_box);
@@ -74,22 +82,41 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
         locationsList = (ListView) findViewById(R.id.locations_list);
         items = new ArrayList<String>();
         adapter = new ArrayAdapter<String>(this, R.layout.list_item, R.id.text_item, items);
-        lHebrew = new Locale("he");
+        lHebrew = new Locale(getString(R.string.hebrewLocale));
         geocoder = new Geocoder(this, lHebrew);
         dbOperations = new DBOperations(this);
 
         b = getIntent().getExtras();
         if(b != null)
         {
-            int metadataId = b.getInt("id");
+            int metadataId = b.getInt(AppConstants.idStr);
             metaData = dbOperations.getMetaDataById(metadataId);
             phoneNumber.setText(metaData.getCell());
             messageBox.setText(metaData.getMessage());
             locationField.setText(metaData.getAddress());
         }
 
+        phoneNumber.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                final int DRAWABLE_RIGHT = 2;
+
+                if(event.getAction() == MotionEvent.ACTION_UP) {
+                    if(event.getRawX() >= (phoneNumber.getRight() - phoneNumber.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width())) {
+                        Uri uri = Uri.parse("content://contacts");
+                        Intent intent = new Intent(Intent.ACTION_PICK, uri);
+                        intent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+                        startActivityForResult(intent, REQUEST_CODE);
+
+                        return true;
+                    }
+                }
+                return false;
+            }
+        });
+
         prefMessage = PreferenceManager.getDefaultSharedPreferences(this).getString("pref_message", null);
-        if(prefMessage != null && prefMessage!="")
+        if(prefMessage != null && prefMessage!= "")
         {
             messageBox.setText(prefMessage);
         }
@@ -124,6 +151,23 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
                 phoneNumberStr = phoneNumber.getText().toString();
                 messageStr = messageBox.getText().toString();
                 addressStr = locationField.getText().toString();
+
+                /**Missing fields content in the app**/
+                if (phoneNumberStr == null || messageStr == null || addressStr == null || addressStr.equals("")) {
+                    Toast.makeText(this, R.string.missingInput, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                /** Checking if there is all permision are missing, if so asks for all at once**/
+                PermissionHandler permissionHandler = PermissionHandler.getInstance();
+                if(!permissionHandler.isPermissionGrantedForAccessCoarseLocation(this) // coarse access permission
+                        || !permissionHandler.isPermissionGrantedForAccessFineLocation(this) // fine location permission
+                        || !permissionHandler.isPermissionGrantedForSendSms(this)) // send sms permission
+                {
+                    Toast.makeText(this, R.string.missingPermissionsMessage, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 if(b == null)
                 {
                     dbOperations.insertMetaDataToDb(phoneNumberStr, messageStr, addressStr, add.getLatitude(), add.getLongitude());
@@ -148,7 +192,7 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
                     dbOperations.insertMetaDataToDb(phoneNumberStr, messageStr, addressStr, latitude, longitude);
                 }
 
-                Toast.makeText(this, "The message was saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.messageSavedStr, Toast.LENGTH_SHORT).show();
 
                 
                 new Handler().postDelayed(new Runnable() {
@@ -192,6 +236,25 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
         }, 400);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent intent) {
+        if (requestCode == REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Uri uri = intent.getData();
+                String[] projection = { ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME };
+
+                Cursor cursor = getContentResolver().query(uri, projection,
+                        null, null, null);
+                cursor.moveToFirst();
+
+                int numberColumnIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+                String number = cursor.getString(numberColumnIndex);
+                phoneNumber.setText(number);
+            }
+        }
+    };
+
     public class AsyncTextListener extends AsyncTask<String, String, Long> {
         Context context;
         String s;
@@ -203,7 +266,7 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
 
         @Override
         protected void onPreExecute() {
-            lHebrew = new Locale("he");
+            lHebrew = new Locale(getString(R.string.hebrewLocale));
             geocoder = new Geocoder(context, lHebrew);
         }
 
@@ -256,6 +319,5 @@ public class NewMetaDataActivity extends AppCompatActivity implements View.OnCli
                 addressAdapter = new AddressAdapter(getBaseContext(), addresses);
             }
         }
-
     }
 }

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.saar.locationalert.objects.AppConstants;
 import com.example.saar.locationalert.objects.MetaData;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ public class DBOperations {
 
     DBWrapper dbWrapper;
     SQLiteDatabase database;
-    String[] columns = {"id", "cell", "message", "addressStr", "latitude", "longitude"};
+    String[] columns = {AppConstants.idStr, AppConstants.cellStr, AppConstants.messageStr, AppConstants.addressStr, AppConstants.latitudeStr, AppConstants.longitudeStr};
 
     public DBOperations(Context context){
         dbWrapper = new DBWrapper(context);
@@ -36,11 +37,11 @@ public class DBOperations {
         ContentValues values = new ContentValues();
         open();
 
-        values.put("cell", cell);
-        values.put("message", message);
-        values.put("addressStr", addressStr);
-        values.put("latitude", latitude);
-        values.put("longitude", longtitude);
+        values.put(AppConstants.cellStr, cell);
+        values.put(AppConstants.messageStr, message);
+        values.put(AppConstants.addressStr, addressStr);
+        values.put(AppConstants.latitudeStr, latitude);
+        values.put(AppConstants.longitudeStr, longtitude);
 
         database.insert(DBWrapper.table, null, values);
         close();
@@ -48,7 +49,7 @@ public class DBOperations {
 
     public void removeMetaDataFromDb(int id){
         open();
-        database.delete(DBWrapper.table, "id=" + id, null);
+        database.delete(DBWrapper.table, AppConstants.idStr + "=" + id, null);
         close();
     }
 
@@ -90,7 +91,6 @@ public class DBOperations {
         metaData.setAddress(cursor.getString(3));
         metaData.setLatitude(cursor.getDouble(4));
         metaData.setLongitude(cursor.getDouble(5));
-
 
         return metaData;
     }

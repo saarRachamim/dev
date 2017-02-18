@@ -89,7 +89,7 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
             mSlideOutToRight = AnimationUtils.loadAnimation(view.getContext(), R.anim.swipe_out_to_right);
             metadataLayout = (LinearLayout) view.findViewById(R.id.metadata_layout);
 
-            alertDialogBuilder.setMessage("Are you sure").setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            alertDialogBuilder.setMessage("Are you sure?").setCancelable(true).setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     triggerRemoveIconOnClick(view);
@@ -180,23 +180,4 @@ public class MetaDatasAdapter extends RecyclerView.Adapter<MetaDatasAdapter.MyVi
     public interface ClickListener{
         public void itemClicked(View view, int position);
     }
-//    Use action bar in the app
-
-//    Not critical - Back should not go back to all previous activities
-
-//    Performance in location finder
-//    First, all UI changes should be in onPostExecute and not in doInBackground. Check out how you pass data to it. - done
-//    On any input change, wait 1 sec. If that 1 sec passed and there was no other input change since - run the asynctask - done
-
-//    Add a new activity that shows a map - // TODO: 23/10/2016  
-
-//    Change UI of manage screen to appear like Gmail - done
-
-//    Add gesture on each item in manage screen, that if you do swipe left to right or right to left... - done
-
-//    ORM - feel free to migrate your data to use GreenDAO - // TODO: 23/10/2016
-
-//    You can start thinking about on boarding and how you the app behaving - done.
-//    I think that on setting to add support for manager number, by doing that updates by the manager will be shown to the user.
-//    The manager will see all the users that are related to him.
 }

@@ -3,10 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <Button
-        android:text="Create New"
+        android:text="New"
         android:id="@+id/create_new_metadata"
         android:layout_gravity="center_horizontal|top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/button_round_corners"
+        android:layout_margin="4dp"
         />
 </LinearLayout>
