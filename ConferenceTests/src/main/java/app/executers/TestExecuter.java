@@ -10,8 +10,11 @@ import java.util.concurrent.TimeUnit;
 
 public class TestExecuter {
 
+    /**
+     * The function executes an infint test
+     */
     public void execute(){
-        System.setProperty("webdriver.chrome.driver", "/Users/Rachamim/Downloads/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "path_to_chrome_driver");
         WebDriver driver = new ChromeDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         boolean stop = true;
@@ -20,7 +23,7 @@ public class TestExecuter {
             try{
                 driver.get(Constants.GOOGLE);
                 WebElement searchField = driver.findElement(By.xpath(Constants.SEARCH_FIELD));
-                searchField.sendKeys("Vilinius places to visit");
+                searchField.sendKeys("String to search at the search field");
                 WebElement searchButton = driver.findElement(By.xpath(Constants.SEARCH_BUTTON));
                 searchButton.submit();
                 Thread.sleep(Constants.FIVE_SECONDS);
