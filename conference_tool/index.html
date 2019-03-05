@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <link rel="icon" href="../../../../favicon.ico">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B" crossorigin="anonymous">
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-route.min.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/3.6.6/firebase.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.min.js"></script>
+        <script src="node_modules/chart.js/Chart.min.js"></script>
+        <script src="node_modules/angular-chart.js/dist/angular-chart.min.js"></script>
+        <script src="https://cdn.firebase.com/libs/angularfire/2.3.0/angularfire.min.js"></script>
+        <script type="text/javascript" src="app.js"></script>
+        <title>Tool example for Conference</title>
+    
+        <!-- Bootstrap core CSS -->
+        <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"></link>
+        <!-- Custom styles for this template -->
+        <link href="product.css" rel="stylesheet">
+      </head>
+      <body ng-app="app">
+            <header>
+              <div class="collapse bg-dark" id="navbarHeader">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-sm-8 col-md-7 py-4">
+                      <h4 class="text-white">About</h4>
+                      <p class="text-muted">This is used for conference demo.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="navbar navbar-dark bg-dark box-shadow">
+                <div class="container d-flex justify-content-between">
+                  <a href="#" class="navbar-brand d-flex align-items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><circle cx="12" cy="13" r="9"></circle></svg>
+                    <strong>Automtion Tool</strong>
+                  </a>
+                </div>
+              </div>
+            </header>
+            <main role="main">
+              <section class="jumbotron text-center">
+                <div class="container">
+                    <div class="jumbotron">
+                        <div class="panel-heading"></div>
+                        <div ng-controller="MyController">
+                          <div class="text-center">
+                            <select ng-options="testName as testName for testName in testsNames" ng-model="selectedTest"></select>
+                            <select ng-options="testTime as testTime for testTime in testsTime" ng-model="timeSelected"></select>
+                            <select ng-options="measurement as measurement for measurement in measurements" ng-model="measurementSelected"></select>
+                            <button type="button" class="btn btn-primary my-2" ng-click="createGraph(selectedTest, timeSelected, measurementSelected)">Execute</button>
+                          </div>
+                          <div class="text-left" style="margin-top:30px">
+                          <canvas id="line" class="chart chart-line text-center" chart-data="data" chart-labels="labels" chart-series="series" chart-options="options"
+                            chart-dataset-override="datasetOverride" chart-click="onClick">
+                          </canvas>
+                          </div>
+                        </div>
+                      </div>
+                </div>
+              </section>
+            </main>
+        
+            <!-- Bootstrap core JavaScript
+            ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+            <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+            <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+            <script src="../../assets/js/vendor/popper.min.js"></script>
+            <script src="../../dist/js/bootstrap.min.js"></script>
+            <script src="../../assets/js/vendor/holder.min.js"></script>
+          </body>
+        </html>
