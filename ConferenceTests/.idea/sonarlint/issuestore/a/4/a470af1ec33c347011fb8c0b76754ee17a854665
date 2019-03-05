@@ -1,0 +1,4 @@
+
+™%squid:RedundantThrowsDeclarationCheck"aRemove the declaration of thrown exception 'org.json.JSONException' which is a runtime exception.(›Îè½8Ø…’¯Ð,
+usquid:S00117!"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(öø¤Äþÿÿÿÿ8Ø…’¯Ð,
+xsquid:S1488#"[Immediately return this expression instead of assigning it to the temporary variable "key".(ž½Î:8Ø…’¯Ð,
